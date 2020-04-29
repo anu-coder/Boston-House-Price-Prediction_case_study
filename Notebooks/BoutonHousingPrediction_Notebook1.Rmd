@@ -120,7 +120,7 @@ Next we create the training and testing dataset. The training dataset will conta
 ```{r}
 library(caret)
 Bhousing.scale=cbind(scale(Bhousing[1:13]), Bhousing[14])
-set.seed(12345)
+set.seed(10)
 
 inTrain <- createDataPartition(y=Bhousing.scale$MEDV, p=0.70, list= F)
 Bhousing.training <- Bhousing.scale[inTrain,]
@@ -143,7 +143,7 @@ $\epsilon$ : residual error.
 
 
 ```{r}
-set.seed(12345)
+set.seed(10)
 lm1=lm(MEDV~., data=Bhousing.training)
 
 sm1=summary(lm1)
@@ -161,6 +161,7 @@ summary(Bhousing.testing$MEDV)
 
 
 ```{r}
+set.seed(10)
 pred.lm1=predict(lm1, newdata= Bhousing.testing)
 
 summary(pred.lm1)
@@ -213,7 +214,8 @@ mean(abs((actuals_predicts$predicts - actuals_predicts$actuals))/actuals_predict
 ```{r}
 #using package DMwR
 library(DMwR)
-
+library(grid)
+set.seed(10)
 regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 
 ```
@@ -228,14 +230,19 @@ The average of your k recorded errors is called the cross-validation error and w
 But here we shall be using a repeated cross validation. </br>
 In repeated cross-validation, the cross-validation procedure is repeated n times, yielding n random partitions of the original sample. The n results are again averaged (or otherwise combined) to produce a single estimation.
 
-To do all this we shall use the "caret" library and use a inbuilt method "linear model(lm)" and also use "repeated cross validation", dividing the data set into 10 folds and repeat 10 times.
+To do all this we shall use the "caret" library and use a inbuilt method "linear model(lm)" and also use "repeated cross validation". 
+
+First we shall train the model using "repetedcv" using 10 folds and 10 repeats. 
 
 
 ```{r}
 library(caret)
+
+set.seed(10)
+
 train_control <- trainControl(method="repeatedcv", number=10, repeats = 10)
 
-model <- train(MEDV~., data=Bhousing, trControl=train_control, method="lm")
+model <- train(MEDV~., data=Bhousing.training, trControl=train_control, method="lm")
 
 print(model)
 ```
@@ -269,6 +276,28 @@ layout(matrix(c(1,2,3,4),2,2))
 plot(model$finalModel)
 ```
 
+```{r}
+set.seed(10)
+pred.m1=predict(model, newdata=Bhousing.testing)
+summary(pred.m1)
+```
+
+```{r}
+actuals_predicts= data.frame(cbind(actuals=Bhousing.testing$MEDV, predicts=pred.lm1))
+
+head(actuals_predicts)
+
+```
+
+```{r}
+#using package DMwR
+library(DMwR)
+library(grid)
+set.seed(10)
+regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+
+```
+
 
 #### Model 2
 
@@ -276,9 +305,10 @@ $log(Y)=\alpha+\beta X+\epsilon$
 
 
 ```{r}
+set.seed(10)
 train_control <- trainControl(method="repeatedcv", number=10, repeats = 10)
 
-model <- train(log(MEDV)~., data=Bhousing, trControl=train_control, method="lm")
+model <- train(log(MEDV)~., data=Bhousing.training, trControl=train_control, method="lm")
 
 print(model)
 
@@ -287,6 +317,29 @@ print(model)
 ```{r}
 layout(matrix(c(1,2,3,4),2,2))
 plot(model$finalModel)
+```
+
+```{r}
+set.seed(10)
+pred.m2=predict(model, newdata=Bhousing.testing)
+actuals_predicts= data.frame(cbind(actuals=Bhousing.testing$MEDV, predicts=exp(pred.m2)))
+
+head(actuals_predicts)
+
+```
+
+```{r}
+#using package DMwR
+library(DMwR)
+library(grid)
+set.seed(10)
+regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+```
+
+```{r}
+layout(matrix(c(1,2),2))
+densityplot(Bhousing.testing$MEDV)
+densityplot(exp(pred.m2))
 ```
 
 
@@ -297,9 +350,10 @@ $log(Y)=\alpha+\beta X+\epsilon$
 
 
 ```{r}
+set.seed(10)
 train_control <- trainControl(method="repeatedcv", number=10, repeats = 10)
 
-model <- train(log(MEDV) ~ DIS+RAD+LSTAT+NOX+INDUS+CRIM+TAX, data=Bhousing, trControl=train_control, method="lm")
+model <- train(log(MEDV) ~ DIS+RAD+LSTAT+NOX+INDUS+CRIM+TAX, data=Bhousing.testing, trControl=train_control, method="lm")
 
 print(model)
 
@@ -311,11 +365,35 @@ plot(model$finalModel)
 ```
 
 
+```{r}
+set.seed(10)
+pred.m2=predict(model, newdata=Bhousing.testing)
+actuals_predicts= data.frame(cbind(actuals=Bhousing.testing$MEDV, predicts=exp(pred.m2)))
+
+head(actuals_predicts)
+
+```
+
+```{r}
+#using package DMwR
+library(DMwR)
+library(grid)
+set.seed(10)
+regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+```
+
+```{r}
+layout(matrix(c(1,2),2))
+densityplot(Bhousing.testing$MEDV)
+densityplot(exp(pred.m2))
+```
+
 #### Model 4
 
 Let us now apply PCA in this, from the scree plot select the optimised feature and then apply the model.
 
 ```{r}
+set.seed(10)
 Bhousing.pca=cbind(scale(Bhousing[1:3]), scale(Bhousing[5:8]), scale(Bhousing[10:13]))
 
 pc=prcomp(Bhousing.pca, scale=FALSE)
@@ -328,6 +406,7 @@ dim(Bhousing.pca)
 ```
 
 ```{r}
+set.seed(10)
 pc.pc1=as.matrix(pc$rotation[,1], nrow=length(pc$rotation[,1]))
 
 pc.pc1
@@ -339,16 +418,20 @@ dim(model4.pc1)
 ```
 
 ```{r}
+set.seed(10)
 pc.data=data.frame(pc1=model4.pc1, CHAS=Bhousing$CHAS, RAD=Bhousing$RAD, MEDV=Bhousing$MEDV)
-
-head(pc.data)
+pc.inTrain <- createDataPartition(y=pc.data$MEDV, p=0.70, list= F)
+pc.data.training <- pc.data[pc.inTrain,]
+pc.data.testing <- pc.data[-pc.inTrain,]
+head(pc.data.training)
 ```
 
 
 ```{r}
+set.seed(10)
 train_control <- trainControl(method="repeatedcv", number=10, repeats = 10)
 
-model <- train(log(MEDV) ~ pc1, data=pc.data, trControl=train_control, method="lm")
+model <- train(log(MEDV) ~ pc1, data=pc.data.training, trControl=train_control, method="lm")
 
 print(model)
 
@@ -357,6 +440,29 @@ print(model)
 ```{r}
 layout(matrix(c(1,2,3,4),2,2))
 plot(model$finalModel)
+```
+
+```{r}
+set.seed(10)
+pred.m2=predict(model, newdata=pc.data.testing)
+actuals_predicts= data.frame(cbind(actuals=pc.data.testing$MEDV, predicts=exp(pred.m2)))
+
+head(actuals_predicts)
+
+```
+
+```{r}
+#using package DMwR
+library(DMwR)
+library(grid)
+set.seed(10)
+regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+```
+
+```{r}
+layout(matrix(c(1,2),2))
+densityplot(Bhousing.testing$MEDV)
+densityplot(exp(pred.m2))
 ```
 
 
