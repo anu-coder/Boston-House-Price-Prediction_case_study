@@ -69,8 +69,7 @@ To get more detailed statistical information from each column, __summary()__ fun
 summary(Bhousing)
 ```
 
-We shall base our prediction mainly on the attribute MEDV (median value of the owner occupied homes) and also on other attributes that are strongly correlated to it. For the given variables and our intuition, we can feel that mnainly, DIS, RAD, LSTAT, NOX, INDUS, CRIM, TAX should have some effect on the variable MEDV. But we shall try to find out all the different types of dependencies in the next section. 
-
+Till this part it remains same as our __BostonHousingPrediction_notebook1__. Next we create the training and testing dataset. The training dataset will contain 70% of the data and the testing dataset will contain remaining 30% of the data. To do so here we use a library caret, and create data partition using inbuilt functions like createDataPartition. We could otherwise have divided the data frame manually in to first 70% and remaining 30%.   
 
 ```{r}
 library(caret)
@@ -84,6 +83,7 @@ head(Bhousing.training)
 
 ```
 
+Next we shall be using the inbuilt library CARET to prdict the outcome using random forest. Along with that we shall be using cross validation tuning method to make the model more robust and effective.
 
 ```{r}
 library(caret)
@@ -105,22 +105,21 @@ print(rf_random)
 
 ```
 
+The above prediction shows the best model is the one with the parameter __mtry=5__
+The below graph shows how the error decreases with the increase of the __ntree__ parameter and reaches a minimum at 500. 
 
 ```{r}
 plot(rf_random$finalModel)
 ```
 
+This is a plot for mtry optimization carried out by the data processing.
+
 ```{r}
 plot(rf_random)
 ```
 
-```{r}
-rf_random$times
-```
+Now, we shall do the prediction using the inbuilt prediction function under the caret package.
 
-```{r}
-rf_random$finalModel
-```
 
 
 ```{r}
@@ -132,24 +131,41 @@ head(actuals_predicts)
 
 ```
 
+We see that after prediction the $RMSE= \sqrt{\frac{\sum(y_{pred}-y_{act})}{n}}$ value is lesser than then all the other models. 
+
+All the errors that one can have are: </br>
+RMSE:  Root Mean Squared Error </br>
+MPE:   Mean Percentage error </br>
+MAPE:  Mean Absolute Percentage Error </br>
+MSE:   Mean Squared Error </br>
+RSS:   Residual sum of Squares </br>
+MAE:   Mean Absolute Error </br>
+MAAPE: Mean Arc-tangent Absolute Error </br>
+
+
 ```{r}
 library(DMwR)
+library(lattice)
 library(grid)
 set.seed(10)
-regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+r=regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+r
+```
+The percentage of RMSE is: 
+
+```{r}
+r_1=as.data.frame(r)
+r_1[3,]/mean(Bhousing$MEDV)*100 
 ```
 
 
 ```{r}
-layout(matrix(c(1,2),2))
-densityplot(Bhousing.testing$MEDV)
-
+plot(density(exp(pred.m2)),col="red", 
+     main="Predicted Vs observed", xlab="", )
+lines(density(Bhousing.testing$MEDV), col="blue") 
 ```
 
-```{r}
-densityplot(exp(pred.m2))
-
-```
+The percentage of RMSE and also this curve fitting, shows that the model is pretty error free while using Random Forest with repeated Cross Validation. 
 
 
 
