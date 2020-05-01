@@ -22,20 +22,20 @@ Following that we shall proceed directly with the non regression models.
 The data is obtained from kaggle website. <br> The displayed are the __features__ of the dataset.  
 
 
-1. CRIM     – per capita crime rate by town <br>
-2. ZN       – proportion of residential land zoned for lots over 25,000 sq.ft <br>
-3. INDUS    – proportion of non-retail business acres per town <br>
-4. CHAS     – Charles River dummy variable (1 if tract bounds river; else 0) <br>
-5. NOX      – nitric oxides concentration (parts per 10 million) <br>
-6. RM       – average number of rooms per dwelling <br>
-7. AGE      – proportion of owner-occupied units built prior to 1940 <br>
-8. DIS      – weighted distances to five Boston employment centres<br>
-9. RAD      – index of accessibility to radial highways <br>
-10. TAX      – full-value property-tax rate per $10,000 <br>
-11. PTRATIO  – pupil-teacher ratio by town <br>
-12. B        – 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town <br>
-13. LSTAT    – % lower status of the population <br>
-14. MEDV     – Median value of owner-occupied homes in $1000’s
+1. *CRIM*     – per capita crime rate by town <br>
+2. *ZN*       – proportion of residential land zoned for lots over 25,000 sq.ft <br>
+3. *INDUS*    – proportion of non-retail business acres per town <br>
+4. *CHAS*     – Charles River dummy variable (1 if tract bounds river; else 0) <br>
+5. *NOX*      – nitric oxides concentration (parts per 10 million) <br>
+6. *RM*       – average number of rooms per dwelling <br>
+7. *AGE*      – proportion of owner-occupied units built prior to 1940 <br>
+8. *DIS*      – weighted distances to five Boston employment centres<br>
+9. *RAD*      – index of accessibility to radial highways <br>
+10. *TAX*      – full-value property-tax rate per $10,000 <br>
+11. *PTRATIO*  – pupil-teacher ratio by town <br>
+12. *B*        – 1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town <br>
+13. *LSTAT*    – % lower status of the population <br>
+14. *MEDV*     – Median value of owner-occupied homes in $1000’s
 
 Read the dataset as a dataframe using read.table. After loading and cleaning the data set looks like the following.
 
@@ -74,7 +74,7 @@ Till this part it remains same as our __BostonHousingPrediction_notebook1__. Nex
 ```{r}
 library(caret)
 Bhousing.scale=cbind(scale(Bhousing[1:13]), Bhousing[14])
-set.seed(10)
+set.seed(1)
 
 inTrain <- createDataPartition(y=Bhousing.scale$MEDV, p=0.70, list= F)
 Bhousing.training <- Bhousing.scale[inTrain,]
@@ -83,7 +83,9 @@ head(Bhousing.training)
 
 ```
 
-Next we shall be using the inbuilt library CARET to prdict the outcome using random forest. Along with that we shall be using cross validation tuning method to make the model more robust and effective.
+### RANDOM FOREST 
+
+Next we shall be using the inbuilt library CARET to prdict the outcome using random forest. Along with that we shall be using cross validation tuning method to find the actual efficiency of the model.
 
 ```{r}
 library(caret)
@@ -120,8 +122,6 @@ plot(rf_random)
 
 Now, we shall do the prediction using the inbuilt prediction function under the caret package.
 
-
-
 ```{r}
 set.seed(1)
 pred.m2=predict(rf_random, newdata=Bhousing.testing)
@@ -134,23 +134,21 @@ head(actuals_predicts)
 We see that after prediction the $RMSE= \sqrt{\frac{\sum(y_{pred}-y_{act})}{n}}$ value is lesser than then all the other models. 
 
 All the errors that one can have are: </br>
-RMSE:  Root Mean Squared Error </br>
-MPE:   Mean Percentage error </br>
-MAPE:  Mean Absolute Percentage Error </br>
-MSE:   Mean Squared Error </br>
-RSS:   Residual sum of Squares </br>
-MAE:   Mean Absolute Error </br>
-MAAPE: Mean Arc-tangent Absolute Error </br>
-
+__RMSE__:  Root Mean Squared Error </br>
+__MPE__:   Mean Percentage error </br>
+__MAPE__:  Mean Absolute Percentage Error </br>
+__MSE__:   Mean Squared Error </br>
+__MAE__:   Mean Absolute Error </br>
 
 ```{r}
 library(DMwR)
 library(lattice)
 library(grid)
-set.seed(10)
+set.seed(1)
 r=regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 r
 ```
+
 The percentage of RMSE is: 
 
 ```{r}
@@ -158,6 +156,7 @@ r_1=as.data.frame(r)
 r_1[3,]/mean(Bhousing$MEDV)*100 
 ```
 
+Let plot below shows that the prediction is nearly good. 
 
 ```{r}
 plot(density(exp(pred.m2)),col="red", 
@@ -167,5 +166,48 @@ lines(density(Bhousing.testing$MEDV), col="blue")
 
 The percentage of RMSE and also this curve fitting, shows that the model is pretty error free while using Random Forest with repeated Cross Validation. 
 
+### GRID Search
+
+Next we shall be using *grid search* technique and see if the model improves at all. 
+
+```{r}
+library(caret)
+library(randomForest)
+control <- trainControl(method='cv', 
+                        number=10, 
+                        search = 'grid')
+
+#Random generate 15 mtry values with tuneLength = 15
+
+tuneGrid <- expand.grid(mtry=c(1:13))
+set.seed(10)
+rf_random_grid <- train(log(MEDV) ~ .,
+                   data = Bhousing.training,
+                   method = 'rf',
+                   tuneGrid=tuneGrid, 
+                   trControl = control)
+print(rf_random_grid)
+
+```
 
 
+
+```{r}
+set.seed(10)
+pred.m2=predict(rf_random, newdata=Bhousing.testing)
+actuals_predicts= data.frame(cbind(actuals=Bhousing.testing$MEDV, predicts=exp(pred.m2)))
+
+head(actuals_predicts)
+
+```
+
+```{r}
+library(DMwR)
+library(lattice)
+library(grid)
+set.seed(10)
+r=regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
+r
+```
+
+We see that there isn't much change in the RMSE value after doing a grid search, the mtry value is still 5. So we shall stick to __Random Forest__ as our best model.
