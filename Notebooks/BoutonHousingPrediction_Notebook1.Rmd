@@ -38,7 +38,8 @@ The data is obtained from kaggle website. <br>The displayed are the __features__
 Read the dataset as a dataframe using read.table. After loading and cleaning the data set looks like the following.
 
 ```{r}
-Bhousing <- read.table("housing.csv", header = FALSE, sep= "")
+data.file <- normalizePath("../Data/housing.csv") 
+Bhousing <- read.table(data.file, header = FALSE, sep= "")
 column_names=c('CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 
                 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV')
 names(Bhousing)=column_names
@@ -128,6 +129,13 @@ rank(cor(Bhousing, Bhousing$MEDV))
 ```
 
 The above statements show that the most negetively correlated is LSTAT and the most positily correlated is RM. 
+
+You can also get names in order of maximum positive correlation to maximum negative correlation as follows using ```order```:
+```{r}
+corr <- cor(Bhousing, Bhousing$MEDV)
+corr.ord <- order(corr)
+rownames(corr)[corr.ord]
+```
 
 ### Step 4: Feature selection and Data partitioning
 
@@ -367,8 +375,41 @@ regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 ```
 ```{r}
 plot(density(exp(pred.m2)),col="red", 
-     main="Predicted Vs observed", xlab="", )
+     main="Predicted Vs observed", xlab="")
 lines(density(Bhousing.testing$MEDV), col="blue") 
+
+```
+You can also create a separate function for it
+```{r}
+
+compare.dens <- function(v1, v2, legend=c("v1", "v2"), 
+                         main=NULL, ...) {
+
+  # check for main
+  if (is.null(main)){
+    main <- paste(legend, collapse = " vs ")
+  }
+  
+  
+  v1.dens <- density(v1) # v1 density
+  v2.dens <- density(v2) # v2 density
+  
+  # Find the max peak of the two
+  max.dens <- max(c(v1.dens$y, v2.dens$y))
+  
+  plot(v1.dens, col="red", xlab="" ,
+       ylim = c(0, max.dens), main=main, ...)
+  lines(v2.dens, col="blue")
+  
+  legend("topright",
+         legend = legend,
+         lty=1,
+         col=c("red", "blue"))
+  
+}
+
+
+compare.dens(exp(pred.m2), Bhousing.testing$MEDV, legend = c("predicted", "observed"))
 ```
 
 
