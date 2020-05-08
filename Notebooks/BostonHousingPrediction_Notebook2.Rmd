@@ -1,6 +1,6 @@
 ---
 title: "Boston House Price Prediction"
-subtitle: 'Notebook 2, continuation of Notebook 1.'
+subtitle: 'Notebook 2, continuation of Notebook 1. Using Random forest, Grid search.'
 author: 
   name: "Anurima Dey"
 date: 28-April-2020
@@ -40,7 +40,8 @@ The data is obtained from kaggle website. <br> The displayed are the __features_
 Read the dataset as a dataframe using read.table. After loading and cleaning the data set looks like the following.
 
 ```{r}
-Bhousing <- read.table("housing.csv", header = FALSE, sep= "")
+data.file <- normalizePath("../Data/housing.csv")
+Bhousing <- read.table(data.file, header = FALSE, sep= "")
 column_names=c('CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 
                 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV')
 names(Bhousing)=column_names
@@ -156,12 +157,16 @@ r_1=as.data.frame(r)
 r_1[3,]/mean(Bhousing$MEDV)*100 
 ```
 
-Let plot below shows that the prediction is nearly good. 
+Now we shall try to see how good is the prediction graphically.
+
+We have a predefined function for this, available in my github repo, __anu-coder/R_utils__, I will be intalling the same to find out this plot. One can use the help function to find out the details of the function being used here after installing the package.
 
 ```{r}
-plot(density(exp(pred.m2)),col="red", 
-     main="Predicted Vs observed", xlab="", )
-lines(density(Bhousing.testing$MEDV), col="blue") 
+library(devtools)
+library(usethis)
+devtools::install_github("anu-coder/R_utils")
+library(testcase)
+compare.dens(actuals_predicts$predicts, actuals_predicts$actuals, legend = c("Predicts","Observed"))
 ```
 
 The percentage of RMSE and also this curve fitting, shows that the model is pretty error free while using Random Forest with repeated Cross Validation. 

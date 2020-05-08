@@ -11,8 +11,8 @@ df_print: paged
 
 ## Purpose of the project: 
 
-This notebook contains the regression models for the House Price Prediction.
-We proceed stepwise.
+This notebook contains the regression models for the House Price Prediction with proper stepwise documention. First we shall be using lm function to predict, followed by a package called "caret".
+We proceed as follows:
 
 ### Step 1: Obtaining and cleaning the data. 
 
@@ -156,7 +156,7 @@ We shall now implement various regression models and find the best one.
 
 Let us first find out the generalised linear Regression model taking, MEDV as the dependant variable and the rest of the dataset as the dependant variable.
 
-### Using REGRESSION 
+### Using REGRESSION (lm function) 
 
 #### Model 1:
 
@@ -204,7 +204,7 @@ The summary show a significant difference in the values of the quartiles. Let us
 
 All this can be manually calculated and compared, for the first model we shall show all of them manually, however from the next onwards we shall be using a package DMwR to find out all the regression errors and the compare among various models.
 
-All the errors that one cand are: </br>
+All the errors that one can find are: </br>
 __RMSE__:  Root Mean Squared Error </br>
 __MPE__:   Mean Percentage error </br>
 __MAPE__:  Mean Absolute Percentage Error </br>
@@ -251,6 +251,18 @@ set.seed(10)
 regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 
 ```
+Now we shall try to see how good is the prediction graphically.
+
+We have a predefined function for this, available in my github repo, __anu-coder/R_utils__, I will be intalling the same to find out this plot. One can use the help function to find out the details of the function being used here after installing the package.
+
+```{r}
+library(devtools)
+library(usethis)
+devtools::install_github("anu-coder/R_utils")
+library(testcase)
+compare.dens(actuals_predicts$predicts, actuals_predicts$actuals, legend = c("Predicts","Observed"))
+```
+
 
 #### Regression using inbuilt library "caret"
 
@@ -265,7 +277,6 @@ In repeated cross-validation, the cross-validation procedure is repeated n times
 To do all this we shall use the "caret" library and use a inbuilt method "linear model(lm)" and also use "repeated cross validation". 
 
 First we shall train the model using "repetedcv" using 10 folds and 10 repeats. 
-
 
 ```{r}
 library(caret)
@@ -331,9 +342,8 @@ regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 ```
 
 ```{r}
-plot(density(pred.m1),col="red", 
-     main="Predicted Vs observed", xlab="", )
-lines(density(Bhousing.testing$MEDV), col="blue") 
+library(testcase)
+compare.dens(pred.m1, Bhousing.testing$MEDV, legend = c("Predicted","Observed"))
 ```
 
 
@@ -373,43 +383,11 @@ library(grid)
 set.seed(10)
 regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 ```
+
+Now we shall plot the prediction, to see how well the values have fitted. 
+
 ```{r}
-plot(density(exp(pred.m2)),col="red", 
-     main="Predicted Vs observed", xlab="")
-lines(density(Bhousing.testing$MEDV), col="blue") 
-
-```
-You can also create a separate function for it
-```{r}
-
-compare.dens <- function(v1, v2, legend=c("v1", "v2"), 
-                         main=NULL, ...) {
-
-  # check for main
-  if (is.null(main)){
-    main <- paste(legend, collapse = " vs ")
-  }
-  
-  
-  v1.dens <- density(v1) # v1 density
-  v2.dens <- density(v2) # v2 density
-  
-  # Find the max peak of the two
-  max.dens <- max(c(v1.dens$y, v2.dens$y))
-  
-  plot(v1.dens, col="red", xlab="" ,
-       ylim = c(0, max.dens), main=main, ...)
-  lines(v2.dens, col="blue")
-  
-  legend("topright",
-         legend = legend,
-         lty=1,
-         col=c("red", "blue"))
-  
-}
-
-
-compare.dens(exp(pred.m2), Bhousing.testing$MEDV, legend = c("predicted", "observed"))
+compare.dens(exp(pred.m2), Bhousing.testing$MEDV, legend = c("Predicted","Observed"))
 ```
 
 
@@ -428,6 +406,7 @@ model <- train(log(MEDV) ~ DIS+RAD+LSTAT+NOX+INDUS+CRIM+TAX, data=Bhousing.testi
 print(model)
 
 ```
+
 
 ```{r}
 layout(matrix(c(1,2,3,4),2,2))
@@ -452,9 +431,7 @@ set.seed(10)
 regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 ```
 ```{r}
-plot(density(exp(pred.m2)),col="red", 
-     main="Predicted Vs observed", xlab="", )
-lines(density(Bhousing.testing$MEDV), col="blue") 
+compare.dens(exp(pred.m2), Bhousing.testing$MEDV, legend = c("Predicted","Observed"))
 ```
 
 #### Model 4
@@ -529,11 +506,8 @@ regr.eval(actuals_predicts$actuals,actuals_predicts$predicts)
 ```
 
 ```{r}
-plot(density(exp(pred.m2)),col="red", 
-     main="Predicted Vs observed", xlab="", )
-lines(density(Bhousing.testing$MEDV), col="blue") 
+compare.dens(exp(pred.m2), Bhousing.testing$MEDV, legend = c("Predicted","Observed"))
 ```
-
 
 
 Thus comparing the four models we see that the model 2 is the best. However certain tunings can be still carried out in model 4. 
