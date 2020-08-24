@@ -16,6 +16,26 @@ Let be precise:
 6. The error matrices used to check the accuracy was RMSE, MAPE, MinMaxerror, correlation percentage. 
 7. Tried to create self help plotting packages available in [R_utils repository](https://github.com/anu-coder/R_utils)
 
-## Some visulization for the dataset. 
+## Some visulization for the dataset: 
 
 The dataset is obtained from Kaggle stored in [here](https://github.com/anu-coder/R_utils/tree/master/R)
+
+**The Description of the dataset: **
+
+<p align = "center">
+<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/1.PNG">
+</p>
+
+**The Histogram of MEDV**
+
+<p align = "center">
+<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/2.PNG">
+</p>
+
+**Correlation between various attributes**
+
+<p align = "center">
+<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/3.PNG">
+</p>
+
+
