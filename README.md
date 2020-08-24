@@ -20,22 +20,22 @@ Let be precise:
 
 The dataset is obtained from Kaggle stored in [here](https://github.com/anu-coder/R_utils/tree/master/R)
 
-**The Description of the dataset: **
+**The Description of the dataset:**
 
-<p align = "center">
-<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/1.PNG">
+<p align = "left">
+<img height = 400, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/1.PNG">
 </p>
 
 **The Histogram of MEDV**
 
 <p align = "center">
-<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/2.PNG">
+<img height = 400, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/2.PNG">
 </p>
 
 **Correlation between various attributes**
 
 <p align = "center">
-<img src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/3.PNG">
+<img height = 400, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/3.PNG">
 </p>
 
 
