@@ -13,7 +13,7 @@ Let be precise:
 3. Optimal and necessary Feature Selection and data partitioning (Train and Test)
 4. Fitting various regression models, and Random Forest model with grid search, and cross validation. 
 5. Have also applied PCA to check if it increses accuracy. 
-6. The error matrices used to check the accuracy was RMSE, MAPE, MinMaxerror, correlation percentage. 
+6. The error matrices used to check the accuracy was RMSE, MAPE, MAE, MSE. 
 7. Tried to create self help plotting packages available in [R_utils repository](https://github.com/anu-coder/R_utils)
 
 ## Some visulization for the dataset: 
@@ -23,19 +23,40 @@ The dataset is obtained from Kaggle stored in [here](https://github.com/anu-code
 **The Description of the dataset:**
 
 <p align = "left">
-<img height = 300, width = 600, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/1.PNG">
+<img height = 250, width = 600, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/1.PNG">
 </p>
 
 **The Histogram of MEDV**
 
 <p align = "left">
-<img height = 400, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/2.PNG">
+<img height = 250, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/2.PNG">
 </p>
 
 **Correlation between various attributes**
 
 <p align = "left">
-<img height = 400, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/3.PNG">
+<img height = 250, width = 500, src = "https://github.com/anu-coder/Boston-House-Price-Prediction_case_study/blob/master/Images/3.PNG">
 </p>
+
+## Procedure: 
+
+I have mainly deployed the problem using three different linear regression models with repeated cross validation for model training. 
+
+#### Model 1:
+
+$MEDV= \alpha + \beta X + \epsilon$  where </br>
+$X$: the matrix containing all the independent variables, </br> 
+$Y$: the dependant variable MEDV. </br>
+$\epsilon$ : residual error.
+
+#### Model 2:
+
+$log(MEDV)= \alpha+ \beta X + \epsilon$
+
+#### Model 3:
+
+$log(MEDV)=\alpha+\beta X+\epsilon, where \ X \ is \ a \ matrix \ of \ ~ DIS+RAD+LSTAT+NOX+INDUS+CRIM+TAX $
+
+
 
 
